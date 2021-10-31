@@ -36,6 +36,7 @@ class OpenGLWindow : public abcg::OpenGLWindow {
   abcg::ElapsedTimer m_restartWaitTimer;
 
   ImFont* m_font{};
+  ImFont* m_scoreFont{};
 
   std::default_random_engine m_randomEngine;
 

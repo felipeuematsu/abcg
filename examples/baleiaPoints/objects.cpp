@@ -26,7 +26,7 @@ Objects::Object Objects::createObject(float scale) {
   auto &re{m_randomEngine};  // Shortcut
 
   // Randomly choose for obstacle and food
-  object.m_type = rand() & 2;
+  object.m_type = rand() & 3;
 
   // If food triangle
   std::uniform_real_distribution<float> randomIntensity(0.5f, 1.0f);
@@ -45,10 +45,9 @@ Objects::Object Objects::createObject(float scale) {
   object.m_rotation = 0.0f;
   object.m_scale = scale;
 
-  // Choose a random angular velocity TODO: HERE
   object.m_angularVelocity = m_randomDistY(re);
 
-  glm::vec2 direction{m_randomDistX(re), 0};
+  glm::vec2 direction{m_randomDistX(re), m_randomDistY(re) * 0.5};
   object.m_velocity = glm::normalize(direction) / 7.0f;
 
   // Create geometry

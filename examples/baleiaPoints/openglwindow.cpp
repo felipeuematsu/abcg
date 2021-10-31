@@ -63,7 +63,8 @@ void OpenGLWindow::initializeGL() {
   ImGuiIO &io{ImGui::GetIO()};
   auto filename{getAssetsPath() + "Inconsolata-Medium.ttf"};
   m_font = io.Fonts->AddFontFromFileTTF(filename.c_str(), 60.0f);
-  if (m_font == nullptr) {
+  m_scoreFont = io.Fonts->AddFontFromFileTTF(filename.c_str(), 32.0f);
+  if (m_font == nullptr || m_scoreFont == nullptr) {
     throw abcg::Exception{abcg::Exception::Runtime("Cannot load font file")};
   }
 
@@ -124,6 +125,17 @@ void OpenGLWindow::paintGL() {
 
 void OpenGLWindow::paintUI() {
   abcg::OpenGLWindow::paintUI();
+
+  if (m_gameData.m_state == State::Playing || m_gameData.m_state == State::GameOver) {
+    ImGui::Begin("Score");
+    ImGui::SetWindowPos(ImVec2(20.0f, 20.0f));
+
+    ImGui::PushFont(m_scoreFont);
+    ImGui::Text("Lives: %d", m_player.life);
+    ImGui::Text("Points: %d", m_player.points);
+    ImGui::PopFont();
+    ImGui::End();
+  }
 
   if (m_gameData.m_state == State::Menu) {
     ImGui::Begin("Menu");
@@ -195,6 +207,8 @@ void OpenGLWindow::checkCollisions() {
           m_gameData.m_state = State::GameOver;
           m_restartWaitTimer.restart();
         }
+      } else {
+        m_player.addPoint();
       }
     }
   }
