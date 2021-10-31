@@ -3,7 +3,7 @@
 #include <cppitertools/itertools.hpp>
 #include <glm/gtx/fast_trigonometry.hpp>
 
-void Objects::initializeGL(GLuint program, int quantity) {
+void Objects::initializeGL(GLuint program) {
   terminateGL();
 
   // Start pseudo-random number generator
@@ -16,21 +16,8 @@ void Objects::initializeGL(GLuint program, int quantity) {
   m_scaleLoc = abcg::glGetUniformLocation(m_program, "scale");
   m_translationLoc = abcg::glGetUniformLocation(m_program, "translation");
 
-  // TODO:creation process, need to keep creating obstacles or food (right now it
-  // creates a determined number of objects
-  //  Create asteroids
   m_objects.clear();
-  m_objects.resize(quantity);
-
-  for (auto &object : m_objects) {
-    object = createObject(0.2);
-
-    // Make sure the asteroid won't collide with the ship
-    do {
-      object.m_translation = {1.0f,
-                              m_randomDistY(m_randomEngine)};
-    } while (glm::length(object.m_translation) < 0.5f);
-  }
+  spawnObjects();
 }
 
 Objects::Object Objects::createObject(float scale) {
@@ -57,7 +44,7 @@ Objects::Object Objects::createObject(float scale) {
   object.m_color.a = 1.0f;
   object.m_rotation = 0.0f;
   object.m_scale = scale;
-//  object.m_translation = {1.5f, translation.y};
+  //  object.m_translation = {1.5f, translation.y};
 
   // Choose a random angular velocity TODO: HERE
   object.m_angularVelocity = m_randomDistY(re);
@@ -102,8 +89,7 @@ Objects::Object Objects::createObject(float scale) {
   // End of binding to current VAO
   abcg::glBindVertexArray(0);
   do {
-    object.m_translation = {1.0f,
-                            m_randomDistY(m_randomEngine)};
+    object.m_translation = {1.0f, m_randomDistY(m_randomEngine)};
   } while (glm::length(object.m_translation) < 0.5f);
   return object;
 }
@@ -146,7 +132,7 @@ void Objects::update(const Player &player, float deltaTime) {
     spawnObjects();
   }
   for (auto &object : m_objects) {
-//    object.m_translation -= player.m_velocity * deltaTime;
+    //    object.m_translation -= player.m_velocity * deltaTime;
     object.m_rotation = glm::wrapAngle(object.m_rotation +
                                        object.m_angularVelocity * deltaTime);
     object.m_translation += object.m_velocity * deltaTime;
@@ -170,8 +156,8 @@ void Objects::spawnObjects() {
     }
 
     // Make sure the asteroid won't collide with the ship
-//    do {
-//      object.m_translation = {0.8f, m_randomDistY(m_randomEngine)};
-//    } while (glm::length(object.m_translation) < 0.5f);
+    //    do {
+    //      object.m_translation = {0.8f, m_randomDistY(m_randomEngine)};
+    //    } while (glm::length(object.m_translation) < 0.5f);
   }
 }

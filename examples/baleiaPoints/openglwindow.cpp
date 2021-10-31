@@ -90,14 +90,14 @@ void OpenGLWindow::restart() {
   m_player.initializeGL(m_objectsProgram);
   m_player.resetLife();
   m_player.resetPoints();
-  m_objects.initializeGL(m_objectsProgram, 7);
+  m_objects.initializeGL(m_objectsProgram);
 }
 
 void OpenGLWindow::update() {
   float deltaTime{static_cast<float>(getDeltaTime())};
 
   // Wait 5 seconds before restarting
-  if (m_gameData.m_state != State::Playing &&
+  if ((m_gameData.m_state == State::Win || m_gameData.m_state == State::GameOver) &&
       m_restartWaitTimer.elapsed() > 5) {
     restart();
     return;
@@ -128,6 +128,7 @@ void OpenGLWindow::paintUI() {
     if (m_gameData.m_state == State::Menu) {    
     // 100x50 button
     	if (ImGui::Button("Start", ImVec2(100, 50))) {
+                restart();
   		m_gameData.m_state = State::Playing;
 	}
 	if (ImGui::Button("Quit", ImVec2(100, 50))) {

@@ -12,7 +12,7 @@ class OpenGLWindow;
 
 class Objects {
  public:
-  void initializeGL(GLuint program, int quantity);
+  void initializeGL(GLuint program);
   void paintGL();
   void terminateGL();
 
