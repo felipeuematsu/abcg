@@ -22,34 +22,32 @@ void Objects::initializeGL(GLuint program) {
 
 Objects::Object Objects::createObject(float scale) {
   Object object;
-  // TODO:Objects must come from the right to the left
 
   auto &re{m_randomEngine};  // Shortcut
 
   // Randomly choose for obstacle and food
-  object.m_type = rand() & 1;
+  object.m_type = rand() & 2;
 
   // If food triangle
+  std::uniform_real_distribution<float> randomIntensity(0.5f, 1.0f);
   if (object.m_type == 1) {
     object.m_polygonSides = 3;
+    object.m_color = glm::vec4(randomIntensity(re), 0, 255, 0);
   } else {
     std::uniform_int_distribution<int> randomSides(6, 20);
+    object.m_color = glm::vec4(randomIntensity(re), 255, 0, 0);
     object.m_polygonSides = randomSides(re);
   }
 
   // Choose a random color (actually, a grayscale)
-  std::uniform_real_distribution<float> randomIntensity(0.5f, 1.0f);
-  object.m_color = glm::vec4(1) * randomIntensity(re);
 
   object.m_color.a = 1.0f;
   object.m_rotation = 0.0f;
   object.m_scale = scale;
-  //  object.m_translation = {1.5f, translation.y};
 
   // Choose a random angular velocity TODO: HERE
   object.m_angularVelocity = m_randomDistY(re);
 
-  // Choose a random direction FIX HERE
   glm::vec2 direction{m_randomDistX(re), 0};
   object.m_velocity = glm::normalize(direction) / 7.0f;
 
@@ -154,10 +152,5 @@ void Objects::spawnObjects() {
     if (object.m_velocity == glm::vec2(0)) {
       object = createObject(0.2);
     }
-
-    // Make sure the asteroid won't collide with the ship
-    //    do {
-    //      object.m_translation = {0.8f, m_randomDistY(m_randomEngine)};
-    //    } while (glm::length(object.m_translation) < 0.5f);
   }
 }
