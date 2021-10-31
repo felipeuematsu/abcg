@@ -133,6 +133,7 @@ void OpenGLWindow::paintUI() {
     ImGui::Text("Lives: %d", m_player.life);
     ImGui::Text("Points: %d", m_player.points);
     ImGui::PopFont();
+    ImGui::SetNextWindowFocus();
     ImGui::End();
   }
 
