@@ -4,7 +4,6 @@
 
 #include "abcg.hpp"
 
-// TODO:INPUT(dog can move on the screen)
 void OpenGLWindow::handleEvent(SDL_Event &event) {
   // Keyboard events
   if (event.type == SDL_KEYDOWN) {
@@ -192,7 +191,6 @@ void OpenGLWindow::terminateGL() {
 
 void OpenGLWindow::checkCollisions() {
   // Check collision between Player and Obstacle or food
-  // TODO:Define a timer to reduce the life again
   for (auto &object : m_objects.m_objects) {
     const auto objectTranslation{object.m_translation};
     const auto distance{

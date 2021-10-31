@@ -111,15 +111,8 @@ void Player::terminateGL() {
   abcg::glDeleteVertexArrays(1, &m_vao);
 }
 
-// TODO:
 void Player::update(const GameData &gameData, float deltaTime) {
-  // Rotate
-  //  if (gameData.m_input[static_cast<size_t>(Input::Left)])
-  //    m_rotation = glm::wrapAngle(m_rotation + 4.0f * deltaTime);
-  //  if (gameData.m_input[static_cast<size_t>(Input::Right)])
-  //    m_rotation = glm::wrapAngle(m_rotation - 4.0f * deltaTime);
-
-  // Apply thrust
+  // Movements
   if (gameData.m_state == State::Playing) {
     if (gameData.m_input[static_cast<size_t>(Input::Up)] &&
         m_translation.y < 0.9f) {
