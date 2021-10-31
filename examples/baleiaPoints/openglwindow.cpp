@@ -55,7 +55,7 @@ void OpenGLWindow::handleEvent(SDL_Event &event) {
     direction.y = -direction.y;
     m_ship.setRotation(std::atan2(direction.y, direction.x) - M_PI_2);
   }
-  */  
+  */
 }
 
 void OpenGLWindow::initializeGL() {
@@ -97,14 +97,15 @@ void OpenGLWindow::update() {
   float deltaTime{static_cast<float>(getDeltaTime())};
 
   // Wait 5 seconds before restarting
-  if ((m_gameData.m_state == State::Win || m_gameData.m_state == State::GameOver) &&
+  if ((m_gameData.m_state == State::Win ||
+       m_gameData.m_state == State::GameOver) &&
       m_restartWaitTimer.elapsed() > 5) {
     restart();
     return;
   }
   if (m_gameData.m_state == State::Playing) {
-  	checkCollisions();
-  	checkWinCondition();
+    checkCollisions();
+    checkWinCondition();
   }
 
   m_player.update(m_gameData, deltaTime);
@@ -124,39 +125,44 @@ void OpenGLWindow::paintGL() {
 void OpenGLWindow::paintUI() {
   abcg::OpenGLWindow::paintUI();
 
-  {
-    if (m_gameData.m_state == State::Menu) {    
-    // 100x50 button
-    	if (ImGui::Button("Start", ImVec2(100, 50))) {
-                restart();
-  		m_gameData.m_state = State::Playing;
-	}
-	if (ImGui::Button("Quit", ImVec2(100, 50))) {
-  		    ImGui::End();
-	}
-}
-    const auto size{ImVec2(300, 85)};
-    const auto position{ImVec2((m_viewportWidth - size.x) / 2.0f,
-                               (m_viewportHeight - size.y) / 2.0f)};
-    ImGui::SetNextWindowPos(position);
-    ImGui::SetNextWindowSize(size);
-    ImGuiWindowFlags flags{ImGuiWindowFlags_NoBackground |
-                           ImGuiWindowFlags_NoTitleBar |
-                           ImGuiWindowFlags_NoInputs};
-    ImGui::Begin(" ", nullptr, flags);
-    ImGui::PushFont(m_font);
-
-    if (m_gameData.m_state == State::GameOver) {
-      ImGui::Text("Game Over!");
-    } else if (m_gameData.m_state == State::Win) {
-      ImGui::Text("*You Win!*");
+  if (m_gameData.m_state == State::Menu) {
+    ImGui::Begin("Menu");
+    int buttonSize = 180;
+    if (ImGui::Button("Start", ImVec2(buttonSize, 50))) {
+      restart();
+      m_gameData.m_state = State::Playing;
     }
-
-    ImGui::PopFont();
+    if (ImGui::Button("Quit", ImVec2(buttonSize, 50))) {
+      ImGui::End();
+    }
+    float width = 200;
+    float height = 200;
+    ImGui::SetWindowPos(ImVec2((m_viewportWidth - width) / 2.0f,
+                               (m_viewportHeight - ImGui::GetWindowHeight()) / 2.0f));
+    ImGui::SetWindowSize(ImVec2(width, height));
+    ImGui::TextWrapped("Catch the purple triangles and avoid the green objects!");
     ImGui::End();
   }
-}
+  const auto size{ImVec2(300, 160)};
+  const auto position{ImVec2((m_viewportWidth - size.x) / 2.0f,
+                             (m_viewportHeight - size.y) / 2.0f)};
+  ImGui::SetNextWindowPos(position);
+  ImGui::SetNextWindowSize(size);
+  ImGuiWindowFlags flags{ImGuiWindowFlags_NoBackground |
+                         ImGuiWindowFlags_NoTitleBar |
+                         ImGuiWindowFlags_NoInputs};
+  ImGui::Begin(" ", nullptr, flags);
+  ImGui::PushFont(m_font);
 
+  if (m_gameData.m_state == State::GameOver) {
+    ImGui::Text("Game Over!");
+  } else if (m_gameData.m_state == State::Win) {
+    ImGui::Text("*You Win!*");
+  }
+
+  ImGui::PopFont();
+  ImGui::End();
+}
 
 void OpenGLWindow::resizeGL(int width, int height) {
   m_viewportWidth = width;
@@ -172,39 +178,35 @@ void OpenGLWindow::terminateGL() {
   m_objects.terminateGL();
 }
 
-
 void OpenGLWindow::checkCollisions() {
   // Check collision between Player and Obstacle or food
   // TODO:Define a timer to reduce the life again
-  for ( auto &object : m_objects.m_objects) {
+  for (auto &object : m_objects.m_objects) {
     const auto objectTranslation{object.m_translation};
     const auto distance{
         glm::distance(m_player.m_translation, objectTranslation)};
 
     if (distance < m_player.m_scale * 0.9f + object.m_scale * 0.12f) {
-    	object.m_hit = true;
-    	if(object.m_type == 0){
-    		object.m_hit = true;
-    		m_player.reduceLife();
-    		if(m_player.life<=0){
-      			m_gameData.m_state = State::GameOver;
-      			m_restartWaitTimer.restart();
-      			
-      		}
-      	}  
+      object.m_hit = true;
+      if (object.m_type != 1) {
+        object.m_hit = true;
+        m_player.reduceLife();
+        if (m_player.life <= 0) {
+          m_gameData.m_state = State::GameOver;
+          m_restartWaitTimer.restart();
+        }
+      }
     }
- 
   }
-      m_objects.m_objects.remove_if(
-        [](const Objects::Object &obj) { return obj.m_hit || obj.m_translation.x < -1.0f; });
+  m_objects.m_objects.remove_if([](const Objects::Object &obj) {
+    return obj.m_hit || obj.m_translation.x < -1.0f;
+  });
 }
 
-//Win if the player collects +10 food
+// Win if the player collects +10 food
 void OpenGLWindow::checkWinCondition() {
-  if (m_player.points >=10) {
+  if (m_player.points >= 10) {
     m_gameData.m_state = State::Win;
     m_restartWaitTimer.restart();
   }
 }
-
-
