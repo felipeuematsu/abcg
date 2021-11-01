@@ -1,6 +1,6 @@
-#Projeto de Computacao Grafica
+# Projeto de Computacao Grafica
 
-##A1- Aplicacao grafica interativa com graficos 2d
+## A1- Aplicacao grafica interativa com graficos 2d
 
 Felipe Leite Uematsu 21008216
 Tamara Cavalcante dos Santos 21060012
